@@ -14,6 +14,7 @@ from langchain_core.rate_limiters import BaseRateLimiter
 from langchain_core.runnables.base import Runnable
 from langchain_core.runnables.config import RunnableConfig
 from langchain_openai import ChatOpenAI
+from lilypad.client import LilypadClient
 
 
 
@@ -26,10 +27,12 @@ class LilypadLLMWrapper(Runnable):
         temperature: float = 0.0,
         max_tokens: int = 8192,
         rate_limiter: Union[BaseRateLimiter, None] = None,
+        api_key: str = "",
     ):
         self.provider = provider
         self.model = model
         self.temperature = temperature
+        self.api_key = api_key
         self.max_tokens = max_tokens
         self.rate_limiter = rate_limiter
         self.parser = StrOutputParser()
@@ -48,7 +51,7 @@ class LilypadLLMWrapper(Runnable):
         # Initialize ChatOpenAI with Lilypad configuration
         self.llm = ChatOpenAI(
             base_url="https://anura-testnet.lilypad.tech/api/v1",
-            api_key=LILYPAD_API_KEY,
+            api_key=self.api_key,
             model=self.model,
             temperature=self.temperature,
             max_tokens=self.max_tokens,
