@@ -1,0 +1,23 @@
+"""
+# templates/Dockerfile.j2
+FROM --platform={{ platform }} {{ base_image }}
+
+WORKDIR /app
+
+{% if gpu %}
+RUN apt-get update && apt-get install -y \
+    nvidia-cuda-toolkit \
+    && rm -rf /var/lib/apt/lists/*
+{% endif %}
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY src/ /app/src
+COPY models/ /app/models
+
+ENV HF_HOME=/app/models
+ENV TRANSFORMERS_OFFLINE=1
+
+CMD ["python", "src/run_inference.py"]
+"""

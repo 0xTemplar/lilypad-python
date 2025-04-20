@@ -1,0 +1,24 @@
+"""
+# templates/inference_script.j2
+import os
+import json
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from lilypad.module_builder.decorators import ModuleDecorators
+
+@ModuleDecorators.text_input
+@ModuleDecorators.json_output
+def main(input_text):
+    tokenizer = AutoTokenizer.from_pretrained("{{ model_name }}")
+    model = AutoModelForCausalLM.from_pretrained("{{ model_name }}")
+    
+    inputs = tokenizer(input_text, return_tensors="pt")
+    outputs = model.generate(**inputs)
+    
+    return {
+        "input": input_text,
+        "output": tokenizer.decode(outputs[0], skip_special_tokens=True)
+    }
+
+if __name__ == "__main__":
+    main()
+"""

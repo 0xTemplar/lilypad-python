@@ -1,0 +1,32 @@
+"""
+# templates/module_manifest.j2
+{
+    "machine": {
+        "gpu": {% if gpu %}1{% else %}0{% endif %},
+        "cpu": {{ min_cpu }},
+        "ram": {{ min_ram }}
+    },
+    "job": {
+        "APIVersion": "V1beta1",
+        "Spec": {
+            "Deal": {
+                "Concurrency": {{ concurrency }}
+            },
+            "Docker": {
+                "Entrypoint": ["python", "src/run_inference.py"],
+                "Image": "{{ module_name }}:{{ module_version }}",
+                "EnvironmentVariables": [
+                    {% for var in environment_vars %}
+                    "{{ var }}={{ '${' + var + '}' }}"{% if not loop.last %},{% endif %}
+                    {% endfor %}
+                ]
+            },
+            "Timeout": {{ timeout }},
+            "Outputs": [{
+                "Name": "outputs",
+                "Path": "/outputs"
+            }]
+        }
+    }
+}
+"""
